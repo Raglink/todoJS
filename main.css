@@ -1,3 +1,10 @@
+li {
+  display: flex;
+  align-items: end;
+}
 .task-done {
   text-decoration: line-through;
+}
+.delete-cross {
+  padding-right: 5px;
 }

@@ -17,17 +17,15 @@ const clearToDoList = () => {
   }
 };
 
-// TO DO now
 const displayTaskDone = (selectedNode) => {
-  console.log(selectedNode);
   if (selectedNode) {
     if (selectedNode.classList.value !== "task-done") {
       selectedNode.classList.add("task-done");
-      console.log("add task-done");
     } else {
-      console.log("already task-done");
       selectedNode.classList.remove("task-done");
     }
+  } else {
+    console.warn("problem with selectedNode ", selectedNode);
   }
 };
 
@@ -35,7 +33,17 @@ const displayToDoList = () => {
   clearToDoList();
   if (todoListArray) {
     for (let i = 0; i < todoListArray.length; i++) {
+      let cross = document.createElement("img");
+      cross.src = "./img/delete.png";
+      cross.width = "18";
+      cross.height = "25";
+      cross.className = "delete-cross";
+      cross.onclick = function () {
+        todoListArray.splice(i, 1);
+        displayToDoList();
+      };
       let tag = document.createElement("li");
+      tag.appendChild(cross);
       let tagContent = document.createTextNode(todoListArray[i]);
       tag.onclick = function () {
         displayTaskDone(tag);
@@ -62,6 +70,5 @@ const addToTodo = () => {
 };
 
 // TODO global
-// add onclick  class (  text-decoration: line-through;) or not
 // delete
 //
