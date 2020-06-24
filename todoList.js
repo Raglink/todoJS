@@ -16,9 +16,12 @@ const clearToDoList = () => {
     }
   }
 };
-
+// add an ID when node is create
+// then  use this ID to check node and update it
 const displayTaskDone = (selectedNode) => {
   if (selectedNode) {
+    console.log(selectedNode);
+
     if (selectedNode.classList.value !== "task-done") {
       selectedNode.classList.add("task-done");
     } else {
@@ -44,7 +47,7 @@ const displayToDoList = () => {
       };
       let tag = document.createElement("li");
       tag.appendChild(cross);
-      let tagContent = document.createTextNode(todoListArray[i]);
+      let tagContent = document.createTextNode(todoListArray[i].value);
       tag.onclick = function () {
         displayTaskDone(tag);
       };
@@ -60,7 +63,11 @@ const displayToDoList = () => {
 const addToTodo = () => {
   // select new task
   if (document.getElementById("new-task").value.length) {
-    todoListArray.push(document.getElementById("new-task").value);
+    // let todoObject = {value =}
+    todoListArray.push({
+      value: document.getElementById("new-task").value,
+      isDone: false,
+    });
     console.log("todoListArray ", todoListArray);
     displayToDoList();
   } else {
@@ -68,7 +75,3 @@ const addToTodo = () => {
     //console.error("problem with new-task length");
   }
 };
-
-// TODO global
-// delete
-//
