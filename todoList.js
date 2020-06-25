@@ -16,26 +16,28 @@ const clearToDoList = () => {
     }
   }
 };
-// add an ID when node is create
-// then  use this ID to check node and update it
-const displayTaskDone = (selectedNode) => {
-  if (selectedNode) {
-    console.log(selectedNode);
 
-    if (selectedNode.classList.value !== "task-done") {
-      selectedNode.classList.add("task-done");
-    } else {
-      selectedNode.classList.remove("task-done");
+const sortToDoList =()=>{
+    function compare(a,b){
+      const valueA = a.isDone
+      const valueB = b.isDone
+      let comparison = 0
+      if(valueA>valueB){
+        comparison = 1
+      } else if(valueA<valueB){
+        comparison = -1
+      }
+      return comparison
     }
-  } else {
-    console.warn("problem with selectedNode ", selectedNode);
-  }
-};
-
+    console.log("before todoListArray",todoListArray);
+    todoListArray = todoListArray.sort(compare)
+    console.log("after todoListArray",todoListArray);
+}
 const displayToDoList = () => {
   clearToDoList();
   if (todoListArray) {
     for (let i = 0; i < todoListArray.length; i++) {
+      //cross
       let cross = document.createElement("img");
       cross.src = "./img/delete.png";
       cross.width = "18";
@@ -45,14 +47,19 @@ const displayToDoList = () => {
         todoListArray.splice(i, 1);
         displayToDoList();
       };
+
+      // text value
       let tag = document.createElement("li");
-      tag.appendChild(cross);
       let tagContent = document.createTextNode(todoListArray[i].value);
+      tag.id = i
       tag.onclick = function () {
-        displayTaskDone(tag);
+        displayTaskDone(tag, i);
       };
-      tag.appendChild(tagContent);
+
+      // update DOM element
       let element = document.getElementById("todo-list");
+      tag.appendChild(cross);
+      tag.appendChild(tagContent);
       element.appendChild(tag);
     }
   } else {
@@ -60,6 +67,48 @@ const displayToDoList = () => {
   }
 };
 
+const updatelistCss = (nodeToUpdate, isDoneToogle) => {
+  console.log("nodeToUpdate",nodeToUpdate);
+  console.log("isDoneToogle",isDoneToogle);
+  
+  if(nodeToUpdate && typeof(isDoneToogle) === "boolean" ){ 
+    displayToDoList()
+    if (isDoneToogle ) {
+      nodeToUpdate.classList.add("task-done");
+      console.log(nodeToUpdate);
+      
+    } else {
+      nodeToUpdate.classList.remove("task-done");
+    }
+    
+
+  }else{
+    console.warn("problem with nodeToUpdate or isDoneToogle");
+    
+  }
+}
+
+const displayTaskDone = (selectedNode, rank) => {
+  if (selectedNode && rank >=0) {    
+    console.log(selectedNode);
+    if(todoListArray[rank]){
+
+      console.log(todoListArray[rank]);
+      if(todoListArray[rank].isDone === false){
+        todoListArray[rank].isDone = true
+      }else{
+        todoListArray[rank].isDone =false
+      }
+      sortToDoList()
+      updatelistCss(selectedNode, todoListArray[rank].isDone)
+    }else{
+      console.info("last clicked node is deleted")
+    }
+    } else {
+      console.warn("problem with selectedNode et rank ", " selectedNode ", selectedNode , "rank ", rank);
+  }
+
+};
 const addToTodo = () => {
   // select new task
   if (document.getElementById("new-task").value.length) {
@@ -74,4 +123,7 @@ const addToTodo = () => {
     alert("Merci de saisir une nouvelle tâche");
     //console.error("problem with new-task length");
   }
+  sortToDoList()
+  displayToDoList()
+
 };
