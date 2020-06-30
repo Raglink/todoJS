@@ -33,8 +33,35 @@ const sortToDoList =()=>{
     todoListArray = todoListArray.sort(compare)
     console.log("after todoListArray",todoListArray);
 }
+
+const displayTaskDone = (selectedNode, rank) => {
+  if (selectedNode && rank >=0) {    
+    console.log(selectedNode);
+    if(todoListArray[rank]){
+
+      console.log("here ", todoListArray[rank]);
+      console.log("todoListArray[rank].isDone ",todoListArray[rank].isDone);
+      
+      if(todoListArray[rank].isDone == false){
+        todoListArray[rank].isDone = true
+      }else{
+        todoListArray[rank].isDone =false
+      }
+      console.log("todoListArray[rank].isDone => ",todoListArray[rank].isDone);
+      displayToDoList()
+      updatelistCss(selectedNode, todoListArray[rank].isDone)
+    }else{
+      console.info("last clicked node is deleted")
+    }
+    } else {
+      console.warn("problem with selectedNode et rank ", " selectedNode ", selectedNode , "rank ", rank);
+  }
+
+};
+
 const displayToDoList = () => {
   clearToDoList();
+  sortToDoList()
   if (todoListArray) {
     for (let i = 0; i < todoListArray.length; i++) {
       //cross
@@ -53,6 +80,8 @@ const displayToDoList = () => {
       let tagContent = document.createTextNode(todoListArray[i].value);
       tag.id = i
       tag.onclick = function () {
+        console.log("tag ",tag.id);
+        
         displayTaskDone(tag, i);
       };
 
@@ -72,10 +101,12 @@ const updatelistCss = (nodeToUpdate, isDoneToogle) => {
   console.log("isDoneToogle",isDoneToogle);
   
   if(nodeToUpdate && typeof(isDoneToogle) === "boolean" ){ 
-    displayToDoList()
+    console.log("tototo " ,isDoneToogle);
     if (isDoneToogle ) {
+      
+      console.log("nodeToUpdate.classList ",nodeToUpdate.classList);
       nodeToUpdate.classList.add("task-done");
-      console.log(nodeToUpdate);
+      console.log("nodeToUpdate.classList => ",nodeToUpdate.classList );
       
     } else {
       nodeToUpdate.classList.remove("task-done");
@@ -88,27 +119,7 @@ const updatelistCss = (nodeToUpdate, isDoneToogle) => {
   }
 }
 
-const displayTaskDone = (selectedNode, rank) => {
-  if (selectedNode && rank >=0) {    
-    console.log(selectedNode);
-    if(todoListArray[rank]){
 
-      console.log(todoListArray[rank]);
-      if(todoListArray[rank].isDone === false){
-        todoListArray[rank].isDone = true
-      }else{
-        todoListArray[rank].isDone =false
-      }
-      sortToDoList()
-      updatelistCss(selectedNode, todoListArray[rank].isDone)
-    }else{
-      console.info("last clicked node is deleted")
-    }
-    } else {
-      console.warn("problem with selectedNode et rank ", " selectedNode ", selectedNode , "rank ", rank);
-  }
-
-};
 const addToTodo = () => {
   // select new task
   if (document.getElementById("new-task").value.length) {
@@ -116,6 +127,7 @@ const addToTodo = () => {
     todoListArray.push({
       value: document.getElementById("new-task").value,
       isDone: false,
+      creationRank: todoListArray.length
     });
     console.log("todoListArray ", todoListArray);
     displayToDoList();
@@ -123,7 +135,6 @@ const addToTodo = () => {
     alert("Merci de saisir une nouvelle tâche");
     //console.error("problem with new-task length");
   }
-  sortToDoList()
   displayToDoList()
 
 };
