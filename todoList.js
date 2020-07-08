@@ -1,7 +1,37 @@
 // global variables
-let todoListArray = [];
+let List = function(){
+  {this.list=[{value:"toto",isDone:true},{value:"toto1",isDone:false}]}
+}
+let todoList = new List 
+List.prototype.display = function(){
+  console.log(todoList)
+}
+
+todoList.display()
+let todoListArray = []
 
 // define functions
+  const updatelistCss = (nodeToUpdate, isDoneToogle) => {
+    console.log("nodeToUpdate",nodeToUpdate);
+    console.log("isDoneToogle",isDoneToogle);
+    
+    if(nodeToUpdate && typeof(isDoneToogle) ==="boolean" ){ 
+      console.log("tototo " ,isDoneToogle);
+      if (isDoneToogle ) {
+        
+        console.log("nodeToUpdate.classList ",nodeToUpdate.classList);
+        nodeToUpdate.classList.add("task-done");
+        console.log("nodeToUpdate.classList => ",nodeToUpdate.classList );
+        
+      } else {
+        nodeToUpdate.classList.remove("task-done");
+      }
+  
+    }else{
+      console.warn("problem with nodeToUpdate or isDoneToogle");
+      
+    }
+  }
 const clearToDoList = () => {
   if (document.getElementById("todo-list")) {
     if (document.getElementById("todo-list").childNodes.length) {
@@ -29,9 +59,7 @@ const sortToDoList =()=>{
       }
       return comparison
     }
-    console.log("before todoListArray",todoListArray);
     todoListArray = todoListArray.sort(compare)
-    console.log("after todoListArray",todoListArray);
 }
 
 const displayTaskDone = (selectedNode, rank) => {
@@ -48,8 +76,8 @@ const displayTaskDone = (selectedNode, rank) => {
         todoListArray[rank].isDone =false
       }
       console.log("todoListArray[rank].isDone => ",todoListArray[rank].isDone);
-      displayToDoList()
       updatelistCss(selectedNode, todoListArray[rank].isDone)
+      displayToDoList()
     }else{
       console.info("last clicked node is deleted")
     }
@@ -78,63 +106,42 @@ const displayToDoList = () => {
       // text value
       let tag = document.createElement("li");
       let tagContent = document.createTextNode(todoListArray[i].value);
-      tag.id = i
       tag.onclick = function () {
-        console.log("tag ",tag.id);
-        
-        displayTaskDone(tag, i);
+        displayTaskDone(tag,i)
+        console.log("tag ",tag);
+        console.log("todoListArray[i].isDone ",todoListArray[i].isDone);
+        updatelistCss(tag, todoListArray[i].isDone);       
       };
-
+      
       // update DOM element
       let element = document.getElementById("todo-list");
       tag.appendChild(cross);
       tag.appendChild(tagContent);
       element.appendChild(tag);
     }
+
   } else {
     console.error("Error todoListArray in displayToDoList ");
   }
 };
 
-const updatelistCss = (nodeToUpdate, isDoneToogle) => {
-  console.log("nodeToUpdate",nodeToUpdate);
-  console.log("isDoneToogle",isDoneToogle);
-  
-  if(nodeToUpdate && typeof(isDoneToogle) === "boolean" ){ 
-    console.log("tototo " ,isDoneToogle);
-    if (isDoneToogle ) {
-      
-      console.log("nodeToUpdate.classList ",nodeToUpdate.classList);
-      nodeToUpdate.classList.add("task-done");
-      console.log("nodeToUpdate.classList => ",nodeToUpdate.classList );
-      
-    } else {
-      nodeToUpdate.classList.remove("task-done");
-    }
-    
-
-  }else{
-    console.warn("problem with nodeToUpdate or isDoneToogle");
-    
-  }
-}
 
 
 const addToTodo = () => {
   // select new task
   if (document.getElementById("new-task").value.length) {
-    // let todoObject = {value =}
     todoListArray.push({
       value: document.getElementById("new-task").value,
       isDone: false,
-      creationRank: todoListArray.length
     });
     console.log("todoListArray ", todoListArray);
     displayToDoList();
   } else {
     alert("Merci de saisir une nouvelle tâche");
-    //console.error("problem with new-task length");
   }
-  displayToDoList()
+  //displayToDoList()
 
 };
+
+let valueToCookie = {list:[{value:"toto",isDone:true},{value:"toto1",isDone:false}]}
+localStorage.setItem("test",JSON.stringify(valueToCookie))
