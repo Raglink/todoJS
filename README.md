@@ -11,5 +11,4 @@
     <li>Feat - Edit task</li>
     <li>Feat - submit input on enter </li>
     <li>Tech - Try if map function if possible</li>
-    <li>Feat - use id not i to update list</li>
 </ul>
