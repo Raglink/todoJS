@@ -1,16 +1,17 @@
 // global variables
 let List = function () {
   this.list = [
-    { value: "test2", isDone: false },
-    { value: "test1", isDone: false },
-    { value: "test3", isDone: false },
-    { value: "test4", isDone: false },
+    // to test
+    // { value: "test2", isDone: false },
+    // { value: "test1", isDone: false },
+    // { value: "test3", isDone: false },
+    // { value: "test4", isDone: false },
   ];
 };
 
 let todoList = new List();
 
-// Define functions
+// Define  List functions
 List.prototype.sort = function () {
   function compare(a, b) {
     const valueA = a.isDone;
@@ -121,12 +122,19 @@ const addToTodo = () => {
   if (document.getElementById("new-task").value.length) {
     todoList.add(document.getElementById("new-task").value);
     displayToDoList();
+    document.getElementById("new-task").value = "";
   } else {
     alert("Merci de saisir une nouvelle tâche");
   }
+};
+const submitOnEnter = () => {
+  document.getElementById("new-task").addEventListener("keydown", function (e) {
+    e.keyCode == 13 && addToTodo();
+  });
 };
 // init page
 const init = () => {
   !todoList.list.length && todoList.load();
   displayToDoList();
+  submitOnEnter();
 };

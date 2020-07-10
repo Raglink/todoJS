@@ -4,7 +4,6 @@
 
 <ul>
     <li>Feat - CSS desktop and mobile</li>
-    <li>Feat - submit input on enter </li>
     <li>Tech - Try if map function if possible</li>
     <li>Feat - Edit task</li>
 </ul>
