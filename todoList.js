@@ -81,9 +81,9 @@ const displayToDoList = () => {
     for (let i = 0; i < todoList.list.length; i++) {
       //cross
       let cross = document.createElement("img");
-      cross.src = "./img/delete.png";
-      cross.width = "18";
-      cross.height = "25";
+      cross.src = "./img/delete.svg";
+      cross.width = "15";
+      cross.height = "15";
       cross.className = "delete-cross";
       cross.onclick = function () {
         todoList.remove(i);
