@@ -1,6 +1,11 @@
 // global variables
 let List = function () {
-  this.list = [];
+  this.list = [
+    { value: "test2", isDone: false },
+    { value: "test1", isDone: false },
+    { value: "test3", isDone: false },
+    { value: "test4", isDone: false },
+  ];
 };
 
 let todoList = new List();
@@ -31,16 +36,12 @@ List.prototype.save = function () {
 List.prototype.load = function () {
   let cookieContent = JSON.parse(localStorage.getItem("list"));
   this.list = cookieContent;
-
-  this.display();
 };
 
 List.prototype.add = function (textFieldValue) {
-  console.log("thisList", this.list);
   this.list.push({ value: textFieldValue, isDone: false });
-  todoList.save();
   todoList.sort();
-  todoList.display();
+  todoList.save();
 };
 
 List.prototype.done = function (rank) {
@@ -51,12 +52,13 @@ List.prototype.done = function (rank) {
     this.list[rank].isDone = true;
   }
   todoList.sort();
-  todoList.display();
+  todoList.save();
 };
 
 List.prototype.remove = function (rank) {
   this.list.splice(rank, 1);
-  todoList.display();
+  todoList.sort();
+  todoList.save();
 };
 
 // Define display rules
@@ -80,38 +82,40 @@ const displayToDoList = () => {
   if (todoList.list.length >= 0) {
     for (let i = 0; i < todoList.list.length; i++) {
       //cross
-      let cross = document.createElement("img");
+      let cross = document.createElement("IMG");
       cross.src = "./img/delete.svg";
       cross.width = "15";
       cross.height = "15";
       cross.className = "delete-cross";
-      cross.onclick = function () {
+      cross.onclick = () => {
         todoList.remove(i);
         displayToDoList();
       };
 
       // text value
       let tag = document.createElement("li");
-      let tagContent = document.createTextNode(todoList.list[i].value);
-      tag.onclick = function () {
+      let spanTag = document.createElement("SPAN");
+      spanTag.onclick = function () {
         todoList.done(i);
         displayToDoList();
       };
+      let tagContent = document.createTextNode(todoList.list[i].value);
 
       // update DOM element
       let element = document.getElementById("todo-list");
       tag.appendChild(cross);
-      tag.appendChild(tagContent);
+      spanTag.appendChild(tagContent);
+      tag.appendChild(spanTag);
       if (todoList.list[i].isDone) {
         tag.classList.add("task-done");
       }
+
       element.appendChild(tag);
     }
   } else {
     console.error("Error todoList in displayToDoList ");
   }
 };
-
 const addToTodo = () => {
   // select new task
   if (document.getElementById("new-task").value.length) {
@@ -120,4 +124,9 @@ const addToTodo = () => {
   } else {
     alert("Merci de saisir une nouvelle tâche");
   }
+};
+// init page
+const init = () => {
+  !todoList.list.length && todoList.load();
+  displayToDoList();
 };
