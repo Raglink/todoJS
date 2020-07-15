@@ -36,7 +36,7 @@ List.prototype.save = function () {
 
 List.prototype.load = function () {
   let cookieContent = JSON.parse(localStorage.getItem("list"));
-  this.list = cookieContent;
+  cookieContent == null ? (this.list = []) : (this.list = cookieContent);
 };
 
 List.prototype.add = function (textFieldValue) {
@@ -61,6 +61,10 @@ List.prototype.remove = function (rank) {
   todoList.sort();
   todoList.save();
 };
+List.prototype.edit = function (newValue, rank) {
+  this.list[rank] = newValue;
+  todoList.save();
+};
 
 // Define display rules
 const clearToDoList = () => {
@@ -80,7 +84,7 @@ const clearToDoList = () => {
 
 const displayToDoList = () => {
   clearToDoList();
-  if (todoList.list.length >= 0) {
+  if (todoList.list != null || todoList.list != undefined) {
     for (let i = 0; i < todoList.list.length; i++) {
       //cross
       let cross = document.createElement("IMG");
@@ -92,6 +96,7 @@ const displayToDoList = () => {
         todoList.remove(i);
         displayToDoList();
       };
+      let element = document.getElementById("todo-list");
 
       // text value
       let tag = document.createElement("li");
@@ -101,9 +106,19 @@ const displayToDoList = () => {
         displayToDoList();
       };
       let tagContent = document.createTextNode(todoList.list[i].value);
+      // edit
+      if (!todoList.list[i].isDone) {
+        let edit = document.createElement("IMG");
+        edit.src = "./img/edit.svg";
+        edit.width = "15";
+        edit.height = "15";
+        edit.onclick = () => {
+          editTodo();
+        };
+        tag.appendChild(edit);
+      }
 
       // update DOM element
-      let element = document.getElementById("todo-list");
       tag.appendChild(cross);
       spanTag.appendChild(tagContent);
       tag.appendChild(spanTag);
@@ -114,27 +129,81 @@ const displayToDoList = () => {
       element.appendChild(tag);
     }
   } else {
-    console.error("Error todoList in displayToDoList ");
+    console.info("todoList in displayToDoList in null or undefined");
   }
 };
 const addToTodo = () => {
   // select new task
-  if (document.getElementById("new-task").value.length) {
-    todoList.add(document.getElementById("new-task").value);
-    displayToDoList();
-    document.getElementById("new-task").value = "";
+  if (document.getElementById("new-task")) {
+    if (document.getElementById("new-task").value.length > 0) {
+      todoList.add(document.getElementById("new-task").value);
+      displayToDoList();
+      document.getElementById("new-task").value = "";
+    } else {
+      alert("Merci de saisir une nouvelle tâche");
+    }
   } else {
-    alert("Merci de saisir une nouvelle tâche");
+    console.info(`document.getElementById("new-task") is null or undefined`);
   }
 };
-const submitOnEnter = () => {
-  document.getElementById("new-task").addEventListener("keydown", function (e) {
-    e.keyCode == 13 && addToTodo();
-  });
+const editTodo = () => {
+  // Need to finish this function
+  displayForm(todoList.list[i].value, todoList.edit("toto", "edit-task", i));
+};
+
+// Need to update submitOnEnter function
+const submitOnEnter = (id, addOrUpdate) => {
+  if (document.getElementById(id)) {
+    document.getElementById(id).addEventListener("keydown", function (e) {
+      e.keyCode == 13 && addOrUpdate;
+    });
+  } else {
+    console.info(`document.getElementById(id) do not exist`);
+  }
+};
+const displayForm = (inputValue, onClickfunc, id, rank) => {
+  console.log(rank);
+  if (inputValue !== undefined && onClickfunc !== undefined) {
+    let inputTextField = document.createElement("INPUT");
+    inputTextField.type = "text";
+    inputTextField.size = "30";
+    inputTextField.id = id;
+
+    if (rank === undefined) {
+      inputTextField.id = "new-task";
+      inputTextField.placeholder = inputValue;
+    } else {
+      inputTextField.id = "edit-task";
+      inputTextField.value = inputValue;
+    }
+
+    let submitButton = document.createElement("INPUT");
+    submitButton.type = "submit";
+    if (rank === undefined) {
+      submitButton.value = "Ajouter cette tâche";
+      submitButton.onclick = () => {
+        addToTodo();
+      };
+    } else {
+      submitButton.value = "Mettre à jour cette tâche";
+      submitButton.onclick = () => {
+        console.log("add update func here");
+        // add update func here
+      };
+    }
+
+    // update DOM
+    let element = document.getElementById("input");
+    element.appendChild(inputTextField);
+    element.appendChild(submitButton);
+  } else {
+    console.error("problem with inputValue or onClickfunc");
+  }
 };
 // init page
 const init = () => {
   !todoList.list.length && todoList.load();
   displayToDoList();
   submitOnEnter();
+  displayForm("Saisissez une nouvelle tâche", "addToTodo()", "new-task");
 };
