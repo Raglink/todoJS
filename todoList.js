@@ -62,7 +62,9 @@ List.prototype.remove = function (rank) {
   todoList.save();
 };
 List.prototype.edit = function (newValue, rank) {
-  this.list[rank] = newValue;
+  console.log( "this.list[rank]1 ", this.list[rank])
+  this.list[rank].value = newValue;
+  console.log( "this.list[rank]2", this.list[rank])
   todoList.save();
 };
 
@@ -113,7 +115,7 @@ const displayToDoList = () => {
         edit.width = "15";
         edit.height = "15";
         edit.onclick = () => {
-          editTodo();
+          editTodo(i);
         };
         tag.appendChild(edit);
       }
@@ -125,14 +127,75 @@ const displayToDoList = () => {
       if (todoList.list[i].isDone) {
         tag.classList.add("task-done");
       }
-
+      
       element.appendChild(tag);
     }
   } else {
     console.info("todoList in displayToDoList in null or undefined");
   }
 };
+// Need to update submitOnEnter function
+const submitOnEnter = (id, addOrUpdate) => {
+  if (document.getElementById(id)) {
+    document.getElementById(id).addEventListener("keydown", function (e) {
+      e.keyCode == 13 && addOrUpdate;
+    });
+  } else {
+    console.info(`document.getElementById(id) do not exist`);
+  }
+};
+const displayForm = (targetedNode,inputValue, id, rank) => {
+    if (inputValue !== undefined) {
+      let inputTextField = document.createElement("INPUT");
+      inputTextField.type = "text";
+      inputTextField.size = "30";
+      inputTextField.id = id;
+  
+      if (rank === undefined) {
+        inputTextField.id = "new-task";
+        inputTextField.placeholder = inputValue;
+      } else {
+        inputTextField.id = "edit-task";
+        inputTextField.value = inputValue;
+      }
+  
+      let submitButton = document.createElement("INPUT");
+      submitButton.type = "submit";
+      if (rank === undefined) {
+        submitButton.value = "Ajouter cette tâche";
+        submitButton.onclick = () => {
+          addToTodo();
+        };
+      } else {
+        submitButton.value = "Modifier";
+        submitButton.onclick = () => {
+          todoList.edit(inputTextField.value,rank)
+          console.log("add update func here");
+          displayToDoList()
+          // add update func here
+        };
+      }
+  
+      // update DOM
+      let element = document.getElementById(targetedNode);
+      console.log("rank ",rank)
+      if(rank){
+        element = element.childNodes[rank]
+        for(let j = element.childNodes.length-1; j>=0; j--){
+        element.removeChild(element.childNodes[j])  
+        }
+        console.log("element ",element.childNodes)
+      }
+      element.appendChild(inputTextField);
+      element.appendChild(submitButton);
+
+      submitOnEnter("new-task",addToTodo());
+    } else {
+      console.error("problem with inputValue");
+    }
+  };
 const addToTodo = () => {
+  console.log("fire");
   // select new task
   if (document.getElementById("new-task")) {
     if (document.getElementById("new-task").value.length > 0) {
@@ -146,64 +209,15 @@ const addToTodo = () => {
     console.info(`document.getElementById("new-task") is null or undefined`);
   }
 };
-const editTodo = () => {
+const editTodo = (rank) => {
   // Need to finish this function
-  displayForm(todoList.list[i].value, todoList.edit("toto", "edit-task", i));
+  
+  displayForm("todo-list",todoList.list[rank].value, "" , rank);
 };
 
-// Need to update submitOnEnter function
-const submitOnEnter = (id, addOrUpdate) => {
-  if (document.getElementById(id)) {
-    document.getElementById(id).addEventListener("keydown", function (e) {
-      e.keyCode == 13 && addOrUpdate;
-    });
-  } else {
-    console.info(`document.getElementById(id) do not exist`);
-  }
-};
-const displayForm = (inputValue, onClickfunc, id, rank) => {
-  console.log(rank);
-  if (inputValue !== undefined && onClickfunc !== undefined) {
-    let inputTextField = document.createElement("INPUT");
-    inputTextField.type = "text";
-    inputTextField.size = "30";
-    inputTextField.id = id;
-
-    if (rank === undefined) {
-      inputTextField.id = "new-task";
-      inputTextField.placeholder = inputValue;
-    } else {
-      inputTextField.id = "edit-task";
-      inputTextField.value = inputValue;
-    }
-
-    let submitButton = document.createElement("INPUT");
-    submitButton.type = "submit";
-    if (rank === undefined) {
-      submitButton.value = "Ajouter cette tâche";
-      submitButton.onclick = () => {
-        addToTodo();
-      };
-    } else {
-      submitButton.value = "Mettre à jour cette tâche";
-      submitButton.onclick = () => {
-        console.log("add update func here");
-        // add update func here
-      };
-    }
-
-    // update DOM
-    let element = document.getElementById("input");
-    element.appendChild(inputTextField);
-    element.appendChild(submitButton);
-  } else {
-    console.error("problem with inputValue or onClickfunc");
-  }
-};
 // init page
 const init = () => {
   !todoList.list.length && todoList.load();
   displayToDoList();
-  submitOnEnter();
-  displayForm("Saisissez une nouvelle tâche", "addToTodo()", "new-task");
+  displayForm("input","Saisissez une nouvelle tâche", "new-task");
 };
