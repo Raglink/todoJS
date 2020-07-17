@@ -26,9 +26,6 @@ List.prototype.sort = function () {
   }
   this.list = this.list.sort(compare);
 };
-List.prototype.display = function () {
-  console.log("display", todoList);
-};
 
 List.prototype.save = function () {
   localStorage.setItem("list", JSON.stringify(todoList.list));
@@ -46,7 +43,6 @@ List.prototype.add = function (textFieldValue) {
 };
 
 List.prototype.done = function (rank) {
-  console.info("task done");
   if (this.list[rank].isDone) {
     this.list[rank].isDone = false;
   } else {
@@ -62,9 +58,7 @@ List.prototype.remove = function (rank) {
   todoList.save();
 };
 List.prototype.edit = function (newValue, rank) {
-  console.log( "this.list[rank]1 ", this.list[rank])
   this.list[rank].value = newValue;
-  console.log( "this.list[rank]2", this.list[rank])
   todoList.save();
 };
 
@@ -134,18 +128,10 @@ const displayToDoList = () => {
     console.info("todoList in displayToDoList in null or undefined");
   }
 };
-// Need to update submitOnEnter function
-const submitOnEnter = (id, addOrUpdate) => {
-  if (document.getElementById(id)) {
-    document.getElementById(id).addEventListener("keydown", function (e) {
-      e.keyCode == 13 && addOrUpdate;
-    });
-  } else {
-    console.info(`document.getElementById(id) do not exist`);
-  }
-};
+
 const displayForm = (targetedNode,inputValue, id, rank) => {
-    if (inputValue !== undefined) {
+    if (inputValue !== undefined && targetedNode !== undefined) {
+      // input text
       let inputTextField = document.createElement("INPUT");
       inputTextField.type = "text";
       inputTextField.size = "30";
@@ -154,11 +140,20 @@ const displayForm = (targetedNode,inputValue, id, rank) => {
       if (rank === undefined) {
         inputTextField.id = "new-task";
         inputTextField.placeholder = inputValue;
+        inputTextField.addEventListener("keydown", function (e) {
+          e.keyCode == 13 && addToTodo();
+        });
       } else {
         inputTextField.id = "edit-task";
         inputTextField.value = inputValue;
-      }
-  
+        inputTextField.addEventListener("keydown", function (e) {
+          if(e.keyCode == 13){
+            todoList.edit(inputTextField.value,rank)
+            displayToDoList();
+          } 
+      });
+    }
+      // submit button
       let submitButton = document.createElement("INPUT");
       submitButton.type = "submit";
       if (rank === undefined) {
@@ -170,32 +165,27 @@ const displayForm = (targetedNode,inputValue, id, rank) => {
         submitButton.value = "Modifier";
         submitButton.onclick = () => {
           todoList.edit(inputTextField.value,rank)
-          console.log("add update func here");
           displayToDoList()
-          // add update func here
         };
       }
   
       // update DOM
       let element = document.getElementById(targetedNode);
-      console.log("rank ",rank)
-      if(rank){
+      if(rank >=0){
         element = element.childNodes[rank]
         for(let j = element.childNodes.length-1; j>=0; j--){
         element.removeChild(element.childNodes[j])  
         }
-        console.log("element ",element.childNodes)
       }
       element.appendChild(inputTextField);
       element.appendChild(submitButton);
 
-      submitOnEnter("new-task",addToTodo());
+      
     } else {
-      console.error("problem with inputValue");
+      console.error("problem with inputValue or targetedNode ");
     }
   };
 const addToTodo = () => {
-  console.log("fire");
   // select new task
   if (document.getElementById("new-task")) {
     if (document.getElementById("new-task").value.length > 0) {
@@ -210,8 +200,8 @@ const addToTodo = () => {
   }
 };
 const editTodo = (rank) => {
+  displayToDoList()
   // Need to finish this function
-  
   displayForm("todo-list",todoList.list[rank].value, "" , rank);
 };
 
