@@ -1,12 +1,26 @@
 body{
   font-family:"Times New Roman", Times, serif ;
 }
+#wrapper{
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#todo-list{
+  flex:0 500px  ;
+  background-color: yellowgreen;
+  padding: 10px;
+}
 li {
   display: flex;
   align-items: center;
 }
 .task-done {
   text-decoration: line-through;
+  padding-left: 15px;
 }
 .delete-cross {
   padding: 5px;
