@@ -121,7 +121,7 @@ const displayToDoList = () => {
       if (todoList.list[i].isDone) {
         tag.classList.add("task-done");
       }
-      
+
       element.appendChild(tag);
     }
   } else {
@@ -129,62 +129,60 @@ const displayToDoList = () => {
   }
 };
 
-const displayForm = (targetedNode,inputValue, id, rank) => {
-    if (inputValue !== undefined && targetedNode !== undefined) {
-      // input text
-      let inputTextField = document.createElement("INPUT");
-      inputTextField.type = "text";
-      inputTextField.size = "30";
-      inputTextField.id = id;
-  
-      if (rank === undefined) {
-        inputTextField.id = "new-task";
-        inputTextField.placeholder = inputValue;
-        inputTextField.addEventListener("keydown", function (e) {
-          e.keyCode == 13 && addToTodo();
-        });
-      } else {
-        inputTextField.id = "edit-task";
-        inputTextField.value = inputValue;
-        inputTextField.addEventListener("keydown", function (e) {
-          if(e.keyCode == 13){
-            todoList.edit(inputTextField.value,rank)
-            displayToDoList();
-          } 
+const displayForm = (targetedNode, inputValue, id, rank) => {
+  if (inputValue !== undefined && targetedNode !== undefined) {
+    // input text
+    let inputTextField = document.createElement("INPUT");
+    inputTextField.type = "text";
+    inputTextField.size = "30";
+    inputTextField.id = id;
+
+    if (rank === undefined) {
+      inputTextField.id = "new-task";
+      inputTextField.placeholder = inputValue;
+      inputTextField.addEventListener("keydown", function (e) {
+        e.keyCode == 13 && addToTodo();
+      });
+    } else {
+      inputTextField.id = "edit-task";
+      inputTextField.value = inputValue;
+      inputTextField.addEventListener("keydown", function (e) {
+        if (e.keyCode == 13) {
+          todoList.edit(inputTextField.value, rank);
+          displayToDoList();
+        }
       });
     }
-      // submit button
-      let submitButton = document.createElement("INPUT");
-      submitButton.type = "submit";
-      if (rank === undefined) {
-        submitButton.value = "Ajouter cette tâche";
-        submitButton.onclick = () => {
-          addToTodo();
-        };
-      } else {
-        submitButton.value = "Modifier";
-        submitButton.onclick = () => {
-          todoList.edit(inputTextField.value,rank)
-          displayToDoList()
-        };
-      }
-  
-      // update DOM
-      let element = document.getElementById(targetedNode);
-      if(rank >=0){
-        element = element.childNodes[rank]
-        for(let j = element.childNodes.length-1; j>=0; j--){
-        element.removeChild(element.childNodes[j])  
-        }
-      }
-      element.appendChild(inputTextField);
-      element.appendChild(submitButton);
-
-      
+    // submit button
+    let submitButton = document.createElement("INPUT");
+    submitButton.type = "submit";
+    if (rank === undefined) {
+      submitButton.value = "Ajouter cette tâche";
+      submitButton.onclick = () => {
+        addToTodo();
+      };
     } else {
-      console.error("problem with inputValue or targetedNode ");
+      submitButton.value = "Modifier";
+      submitButton.onclick = () => {
+        todoList.edit(inputTextField.value, rank);
+        displayToDoList();
+      };
     }
-  };
+
+    // update DOM
+    let element = document.getElementById(targetedNode);
+    if (rank >= 0) {
+      element = element.childNodes[rank];
+      for (let j = element.childNodes.length - 1; j >= 0; j--) {
+        element.removeChild(element.childNodes[j]);
+      }
+    }
+    element.appendChild(inputTextField);
+    element.appendChild(submitButton);
+  } else {
+    console.error("problem with inputValue or targetedNode ");
+  }
+};
 const addToTodo = () => {
   // select new task
   if (document.getElementById("new-task")) {
@@ -200,14 +198,14 @@ const addToTodo = () => {
   }
 };
 const editTodo = (rank) => {
-  displayToDoList()
+  displayToDoList();
   // Need to finish this function
-  displayForm("todo-list",todoList.list[rank].value, "" , rank);
+  displayForm("todo-list", todoList.list[rank].value, "", rank);
 };
 
 // init page
 const init = () => {
   !todoList.list.length && todoList.load();
   displayToDoList();
-  displayForm("input","Saisissez une nouvelle tâche", "new-task");
+  displayForm("input", "Saisissez une nouvelle tâche", "new-task");
 };
