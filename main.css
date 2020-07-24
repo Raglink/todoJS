@@ -1,10 +1,47 @@
+body {
+  font-family: "Mulish", sans-serif;
+  display: flex;
+  justify-content: center;
+}
+#wrapper {
+  display: flex;
+  align-items: center;
+  flex: 0 1 700px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#todo-list {
+  background-color: whitesmoke;
+  box-shadow: 1px 1px 0px gray;
+  padding: 10px;
+}
+#todo-list:empty {
+  display: none;
+}
 li {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #2219191c;
+  min-width: 200px;
+}
+li:last-child {
+  border: none;
 }
 .task-done {
   text-decoration: line-through;
+  padding-left: 15px;
 }
 .delete-cross {
   padding: 5px;
+}
+#input {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+input {
+  font-family: "Mulish", sans-serif;
 }

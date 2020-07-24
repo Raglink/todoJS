@@ -1,10 +1,5 @@
 # todoJS
 
-## todo
-
-<ul>
-    <li>Feat - CSS desktop and mobile</li>
-    <li>Feat - submit input on enter </li>
-    <li>Tech - Try if map function if possible</li>
-    <li>Feat - Edit task</li>
-</ul>
+- This todo list is an offline app.
+- Todo items are saved and loaded from localstorage<br>
+  Goal of this app : use and update DOM nodes with vanilla JS

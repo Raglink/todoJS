@@ -1,16 +1,17 @@
 // global variables
 let List = function () {
   this.list = [
-    { value: "test2", isDone: false },
-    { value: "test1", isDone: false },
-    { value: "test3", isDone: false },
-    { value: "test4", isDone: false },
+    // to test
+    // { value: "test2", isDone: false },
+    // { value: "test1", isDone: false },
+    // { value: "test3", isDone: false },
+    // { value: "test4", isDone: false },
   ];
 };
 
 let todoList = new List();
 
-// Define functions
+// Define  List functions
 List.prototype.sort = function () {
   function compare(a, b) {
     const valueA = a.isDone;
@@ -25,9 +26,6 @@ List.prototype.sort = function () {
   }
   this.list = this.list.sort(compare);
 };
-List.prototype.display = function () {
-  console.log("display", todoList);
-};
 
 List.prototype.save = function () {
   localStorage.setItem("list", JSON.stringify(todoList.list));
@@ -35,7 +33,7 @@ List.prototype.save = function () {
 
 List.prototype.load = function () {
   let cookieContent = JSON.parse(localStorage.getItem("list"));
-  this.list = cookieContent;
+  cookieContent == null ? (this.list = []) : (this.list = cookieContent);
 };
 
 List.prototype.add = function (textFieldValue) {
@@ -45,7 +43,6 @@ List.prototype.add = function (textFieldValue) {
 };
 
 List.prototype.done = function (rank) {
-  console.info("task done");
   if (this.list[rank].isDone) {
     this.list[rank].isDone = false;
   } else {
@@ -58,6 +55,10 @@ List.prototype.done = function (rank) {
 List.prototype.remove = function (rank) {
   this.list.splice(rank, 1);
   todoList.sort();
+  todoList.save();
+};
+List.prototype.edit = function (newValue, rank) {
+  this.list[rank].value = newValue;
   todoList.save();
 };
 
@@ -79,7 +80,7 @@ const clearToDoList = () => {
 
 const displayToDoList = () => {
   clearToDoList();
-  if (todoList.list.length >= 0) {
+  if (todoList.list != null || todoList.list != undefined) {
     for (let i = 0; i < todoList.list.length; i++) {
       //cross
       let cross = document.createElement("IMG");
@@ -91,6 +92,7 @@ const displayToDoList = () => {
         todoList.remove(i);
         displayToDoList();
       };
+      let element = document.getElementById("todo-list");
 
       // text value
       let tag = document.createElement("li");
@@ -100,9 +102,19 @@ const displayToDoList = () => {
         displayToDoList();
       };
       let tagContent = document.createTextNode(todoList.list[i].value);
+      // edit
+      if (!todoList.list[i].isDone) {
+        let edit = document.createElement("IMG");
+        edit.src = "./img/edit.svg";
+        edit.width = "15";
+        edit.height = "15";
+        edit.onclick = () => {
+          editTodo(i);
+        };
+        tag.appendChild(edit);
+      }
 
       // update DOM element
-      let element = document.getElementById("todo-list");
       tag.appendChild(cross);
       spanTag.appendChild(tagContent);
       tag.appendChild(spanTag);
@@ -113,20 +125,87 @@ const displayToDoList = () => {
       element.appendChild(tag);
     }
   } else {
-    console.error("Error todoList in displayToDoList ");
+    console.info("todoList in displayToDoList in null or undefined");
+  }
+};
+
+const displayForm = (targetedNode, inputValue, id, rank) => {
+  if (inputValue !== undefined && targetedNode !== undefined) {
+    // input text
+    let inputTextField = document.createElement("INPUT");
+    inputTextField.type = "text";
+    inputTextField.size = "30";
+    inputTextField.id = id;
+
+    if (rank === undefined) {
+      inputTextField.id = "new-task";
+      inputTextField.placeholder = inputValue;
+      inputTextField.addEventListener("keydown", function (e) {
+        e.keyCode == 13 && addToTodo();
+      });
+    } else {
+      inputTextField.id = "edit-task";
+      inputTextField.value = inputValue;
+      inputTextField.addEventListener("keydown", function (e) {
+        if (e.keyCode == 13) {
+          todoList.edit(inputTextField.value, rank);
+          displayToDoList();
+        }
+      });
+    }
+    // submit button
+    let submitButton = document.createElement("INPUT");
+    submitButton.type = "submit";
+    if (rank === undefined) {
+      submitButton.value = "Ajouter cette tâche";
+      submitButton.onclick = () => {
+        addToTodo();
+      };
+    } else {
+      submitButton.value = "Modifier";
+      submitButton.onclick = () => {
+        todoList.edit(inputTextField.value, rank);
+        displayToDoList();
+      };
+    }
+
+    // update DOM
+    let element = document.getElementById(targetedNode);
+    if (rank >= 0) {
+      element = element.childNodes[rank];
+      for (let j = element.childNodes.length - 1; j >= 0; j--) {
+        element.removeChild(element.childNodes[j]);
+      }
+    }
+    element.appendChild(inputTextField);
+    element.appendChild(submitButton);
+  } else {
+    console.error("problem with inputValue or targetedNode ");
   }
 };
 const addToTodo = () => {
   // select new task
-  if (document.getElementById("new-task").value.length) {
-    todoList.add(document.getElementById("new-task").value);
-    displayToDoList();
+  if (document.getElementById("new-task")) {
+    if (document.getElementById("new-task").value.length > 0) {
+      todoList.add(document.getElementById("new-task").value);
+      displayToDoList();
+      document.getElementById("new-task").value = "";
+    } else {
+      alert("Merci de saisir une nouvelle tâche");
+    }
   } else {
-    alert("Merci de saisir une nouvelle tâche");
+    console.info(`document.getElementById("new-task") is null or undefined`);
   }
 };
+const editTodo = (rank) => {
+  displayToDoList();
+  // Need to finish this function
+  displayForm("todo-list", todoList.list[rank].value, "", rank);
+};
+
 // init page
 const init = () => {
   !todoList.list.length && todoList.load();
   displayToDoList();
+  displayForm("input", "Saisissez une nouvelle tâche", "new-task");
 };

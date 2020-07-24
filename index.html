@@ -1,23 +1,20 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
-    <script src="todoList.js"></script>
-    <link rel="stylesheet" type="text/css" href="main.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="main.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@200&display=swap" rel="stylesheet"> 
+    <script src="todoList.js"></script>
     <title>Application de todo list</title>
   </head>
   <body onload="init()">
-    <h1>Vos tâches</h1>
-    <div>
-      <ul id="todo-list"></ul>
+    <div id="wrapper">
+      <h1>Vos tâches</h1>
+      <div>
+        <ul id="todo-list"></ul>
+      </div>
+      <div id="input"></div>
     </div>
-    <input
-      id="new-task"
-      type="text"
-      placeholder="Saisissez une nouvelle tâche"
-      size="30"
-    />
-    <input type="button" value="Ajouter cette tâche" onclick="addToTodo()" />
   </body>
 </html>
